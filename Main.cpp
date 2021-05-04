@@ -1,14 +1,95 @@
-ï»¿#include<iostream>
-#include<iomanip>
 #include <windows.h>
 
 #include <conio.h>
 
+extern void Title(); //¤ùÀY (Title.cpp)
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <ctime>
+
+#include "Card.h"
+#include "Player.h"
+
 using namespace std;
 
-extern void Title(); //ç‰‡é ­ (Title.cpp)
+void ShufflePoker();
+int PlayerNumber();
+
+//ÅÜ¼Æ
+const int NUMBER_OF_CARDS = 52; //¥d¼Æ
+Card poker[52]; //class Card ¼³§JµPª«¥ó
+const int player_number = PlayerNumber();
+
+//Shuffle
+void ShufflePoker()
+{
+	int deck[NUMBER_OF_CARDS] = {0};//¥d¤ù
+
+	for (int i = 0; i < NUMBER_OF_CARDS; i++)
+	{
+		deck[i] = i;//±a¤J¥d¸¹
+	}
+
+	srand(time(0)); //¨ú®É¶¡
+	for (int i = 0; i < NUMBER_OF_CARDS; i++) //¬~µP
+	{
+		int index = rand() % NUMBER_OF_CARDS;
+		int temp = deck[i];
+		deck[i] = deck[index];
+		deck[index] = temp;
+	}
+
+	for (int i = 0; i < 52; i++)
+	{
+		poker[i].setSpecies(deck[i] / 13); //¿é¤Jªá¦â
+		poker[i].setNumber(deck[i] % 13); //¿é¤J¼Æ¦r
+	}
+}
+int PlayerNumber()
+{
+	int player = 0;
+	cout << "¦³´X­Ó¤H: " << endl;
+	cin >> player;
+	return player;
+}
+void ShowPlayerCard(Player Player[],int playerNumber)
+{
+	string suits[] = { "Spades","Hearts","Diamonds","Clubs" };
+	string ranks[] = { "Ace","2","3","4","5","6","7","8","9","10","Jack","Queen","King" };
+
+	cout << "--------------------------Player" << playerNumber<< endl;
+	for (int i = 0; i < 2; i++)
+	{
+		cout << suits[Player[playerNumber].getCardSpecies(i)] << " " << ranks[Player[playerNumber].getCardNumber(i)] << endl;
+	}
+}
+void inputPlayerCard(Player Player[], int playerNumber)
+{
+	static int cardNumber = 0;
+	for (int j=0;j<playerNumber;j++)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			Player[j].setCard(i, poker[cardNumber]);
+			cardNumber++;
+		}
+	}
+}
 
 int main()
 {
-	Title();
+	//Title(); //¤ùÀY
+
+	ShufflePoker(); //¬~µPfunction
+
+	Player Player[10];
+
+	inputPlayerCard(Player, player_number);
+
+	for (int j = 0; j < player_number;j++)
+	{
+		ShowPlayerCard(Player, j);
+	}
 }
