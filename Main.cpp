@@ -1,5 +1,5 @@
 #include <windows.h>
-
+#include <vector>
 #include <conio.h>
 
 extern void Title(); //片頭 (Title.cpp)
@@ -21,6 +21,7 @@ int PlayerNumber();
 const int NUMBER_OF_CARDS = 52; //卡數
 Card poker[52]; //class Card 撲克牌物件
 const int player_number = PlayerNumber();
+vector<Player> player;
 
 //Shuffle
 void ShufflePoker()
@@ -54,25 +55,25 @@ int PlayerNumber()
 	cin >> player;
 	return player;
 }
-void ShowPlayerCard(Player Player[],int playerNumber)
+void ShowPlayerCard(vector<Player> Player,int playerNumber)
 {
 	string suits[] = { "Spades","Hearts","Diamonds","Clubs" };
 	string ranks[] = { "Ace","2","3","4","5","6","7","8","9","10","Jack","Queen","King" };
 
-	cout << "--------------------------Player" << playerNumber<< endl;
+	cout << "--------------------------Player" << playerNumber+1<< endl;
 	for (int i = 0; i < 2; i++)
 	{
 		cout << suits[Player[playerNumber].getCardSpecies(i)] << " " << ranks[Player[playerNumber].getCardNumber(i)] << endl;
 	}
 }
-void inputPlayerCard(Player Player[], int playerNumber)
+void inputPlayerCard()
 {
 	static int cardNumber = 0;
-	for (int j=0;j<playerNumber;j++)
+	for (int j=0;j< player_number;j++)
 	{
 		for (int i = 0; i < 2; i++)
 		{
-			Player[j].setCard(i, poker[cardNumber]);
+			player[j].setCard(i, poker[cardNumber]);
 			cardNumber++;
 		}
 	}
@@ -84,12 +85,16 @@ int main()
 
 	ShufflePoker(); //洗牌function
 
-	Player Player[10];
+	Player playertest;
+	for (int i=0;i< player_number;i++)
+	{
+		player.push_back(playertest);
+	}
 
-	inputPlayerCard(Player, player_number);
+	inputPlayerCard();
 
 	for (int j = 0; j < player_number;j++)
 	{
-		ShowPlayerCard(Player, j);
+		ShowPlayerCard(player, j);
 	}
 }
