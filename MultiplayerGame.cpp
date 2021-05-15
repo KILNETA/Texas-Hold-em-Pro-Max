@@ -3,6 +3,7 @@
 #include <string>
 #include <ctime>
 #include <vector>
+#include <conio.h>
 
 #include "Card.h"
 #include "Player.h"
@@ -14,6 +15,7 @@ void MultiplayerGame();//遊戲函式
 int PlayerNumber();//問幾個玩家
 void ShufflePoker();//洗牌
 void inputPublicCard();//發公牌
+void lostCard();//蓋牌
 void inputPlayerCard();//發手牌
 void ShowPublicCard(vector<Card> publicCard);//印出公牌
 void ShowPlayerCard(int playerNumber);//印出手牌
@@ -33,6 +35,8 @@ const int NUMBER_OF_CARDS = 52;
 Card poker[52];
 const int player_number = PlayerNumber();
 static int cardNumber = 0;
+int AllBet = 0;
+int Around = 0;
 /*公用參數*/
 
 //////////////////////////// Functions ////////////////////////////////////
@@ -77,7 +81,7 @@ void ShowPublicCard(vector<Card> publicCard)
 	string ranks[] = { "A","2","3","4","5","6","7","8","9","10","J","Q","K" };
 
 	cout << "--------------------------PublicCard"<< endl;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < publicCard.size(); i++)
 	{
 		cout << suits[publicCard[i].getSpecies()] << " " <<left << setw(3) << ranks[publicCard[i].getNumber()] << endl;
 	}
@@ -94,7 +98,10 @@ void ShowPlayerCard(int playerNumber)
 		cout << suits[player[playerNumber].getCardSpecies(i)] << " " << left << setw(3) << ranks[player[playerNumber].getCardNumber(i)] << endl;
 	}
 	cout << endl;
-	MaxWinCards(playerNumber);
+	if (Around == 3) 
+	{
+		MaxWinCards(playerNumber);
+	}
 }
 //印最佳牌型
 void MaxWinCards(int playerNumber)
@@ -171,11 +178,13 @@ void ShowWinner()
 //發公牌
 void inputPublicCard()
 {
-	for (int j = 0; j < 5; j++)
-	{
-		publicCard.push_back(poker[cardNumber]);
-		cardNumber++;
-	}
+	publicCard.push_back(poker[cardNumber]);
+	cardNumber++;
+}
+//蓋牌
+void lostCard()
+{
+	cardNumber++;
 }
 //發手牌
 void inputPlayerCard()
@@ -329,6 +338,7 @@ void RecordingMaxWinNumber(int* compareNum,int cardNumber)
 //遊戲函式
 void MultiplayerGame()
 {
+	int Place_a_bet = 0;
 	int winPlayer = 0;
 	int Maxwin = 0;
 	ShufflePoker(); //洗牌function
@@ -339,10 +349,86 @@ void MultiplayerGame()
 		player.push_back(playertest);
 	}
 
-	inputPublicCard();
-	inputPlayerCard();
+		cout << "目前彩池" << AllBet << "    Player " << 1 << endl;
+		cout << "小盲注下多少: ";
+		cin >> Place_a_bet;
+		AllBet += Place_a_bet;
+		cout << endl << endl << "按任意鍵下一位" << endl;
+		_getch();
 
-	ShowPublicCard(publicCard);
+		system("cls");
+		cout << "目前彩池" << AllBet << "    Player " << 2 << endl;
+		cout << "強制下大盲注:  "<< Place_a_bet*2;
+		AllBet += (Place_a_bet*2);
+		cout << endl << endl << "按任意鍵下一位" << endl;
+		_getch();
+
+		inputPlayerCard();
+	//印自己+下注
+	for (int j = 2; j < player_number; j++)
+	{
+		system("cls");
+		cout << "目前彩池" << AllBet <<"    Player "<< j+1 << endl;
+		ShowPlayerCard(j);
+		cout << "下注多少: ";
+		cin >> Place_a_bet;
+		AllBet += Place_a_bet;
+		cout << endl << endl << "按任意鍵下一位" << endl;
+		_getch();
+	}
+	for (int j = 0; j < 2; j++)
+	{
+		system("cls");
+		cout << "目前彩池" << AllBet << "    Player " << j+1 << endl;
+		ShowPlayerCard(j);
+		cout << "下注多少: ";
+		cin >> Place_a_bet;
+		AllBet += Place_a_bet;
+		cout << endl << endl << "按任意鍵下一位"<<endl;
+		_getch();
+	}
+	lostCard(); inputPublicCard(); inputPublicCard(); inputPublicCard();//棄一牌 發公牌*3
+	for (int j = 0; j < player_number; j++)
+	{
+		system("cls");
+		cout << "目前彩池" << AllBet << "    Player " << j + 1 << endl;
+		ShowPublicCard(publicCard);
+		ShowPlayerCard(j);
+		cout << "下注多少: ";
+		cin >> Place_a_bet;
+		AllBet += Place_a_bet;
+		cout << endl << endl << "按任意鍵下一位" << endl;
+		_getch();
+	}
+	Around++;
+	lostCard(); inputPublicCard(); ;//棄一牌 發公牌+1
+	for (int j = 0; j < player_number; j++)
+	{
+		system("cls");
+		cout << "目前彩池" << AllBet << "    Player " << j + 1 << endl;
+		ShowPublicCard(publicCard);
+		ShowPlayerCard(j);
+		cout << "下注多少: ";
+		cin >> Place_a_bet;
+		AllBet += Place_a_bet;
+		cout << endl << endl << "按任意鍵下一位" << endl;
+		_getch();
+	}
+	Around++;
+	lostCard(); inputPublicCard(); ;//棄一牌 發公牌+1
+	for (int j = 0; j < player_number; j++)
+	{
+		system("cls");
+		cout << "目前彩池" << AllBet << "    Player " << j + 1 << endl;
+		ShowPublicCard(publicCard);
+		ShowPlayerCard(j);
+		cout << "下注多少: ";
+		cin >> Place_a_bet;
+		AllBet += Place_a_bet;
+		cout << endl << endl << "按任意鍵下一位" << endl;
+		_getch();
+	}
+	Around++;
 
 
 	for (int j = 0; j < player_number; j++)
