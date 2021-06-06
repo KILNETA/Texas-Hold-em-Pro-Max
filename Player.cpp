@@ -65,6 +65,15 @@ void Player::setMaxWin(int maxWinMode , int maxWin[], Card maxWinCards[])
 		ArrangeCards();
 	}
 }
+void Player::setLastOperation(int operation)
+{
+	LastOperation = operation;
+}
+void Player::setEnd(bool end)
+{
+	End = end;
+}
+
 
 int Player::getCardNumber(int num)
 {
@@ -94,4 +103,12 @@ int Player::getMaxWinMode()
 int Player::getMaxWinNumber(int num)
 {
 	return MaxWin[num];
+}
+int Player::getLastOperation()
+{
+	return LastOperation;
+}
+bool Player::getEnd()
+{
+	return End;
 }

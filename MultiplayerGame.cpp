@@ -1,24 +1,40 @@
 ﻿#include <iostream>
 #include <iomanip>
 #include <string>
-#include <ctime>
 #include <vector>
 #include <conio.h>
-
+#include <time.h>
 #include "Card.h"
 #include "Player.h"
 
 using namespace std;
 
 /*Function索引*/
-void MultiplayerGame();//遊戲函式
-int PlayerNumber();//問幾個玩家
-void ShufflePoker();//洗牌
-void inputPublicCard();//發公牌
-void lostCard();//蓋牌
-void inputPlayerCard();//發手牌
-void ShowPublicCard(vector<Card> publicCard);//印出公牌
+//移動 輸入處
+#include <windows.h>
+#include<Mmsystem.h>
+#pragma comment(lib,"winmm.lib")
+
+void gotoxyGame(double x, double y)
+{	// the type is double, so objects can move less than 1 unit 
+	HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD dwPos;
+	dwPos.X = x; // start from 0
+	dwPos.Y = y; // start from 0
+	SetConsoleCursorPosition(hCon, dwPos);
+}
+void MultiplayerGame();//遊戲函式 
+int PlayerNumber();//問幾個玩家 
+void inputPlayerNullData();//創造空值玩家資料 V
+void ShufflePoker();//洗牌 V
+void GameInterface();//印遊戲介面
+void inputPublicCard();//發公牌 V
+void lostCard();//蓋牌 V
+void inputPlayerCard();//發手牌 V
+void ShowPublicCard();//印出公牌
+void ShowPlayerOperating(int playerNumber);//印出所有玩家上一次的操作記錄
 void ShowPlayerCard(int playerNumber);//印出手牌
+void HidePlayerCard();//手牌隱藏
 void MaxWinCards(int playerNumber);//印最佳牌型
 void ShowMaxWinCards(int playerNumber);//最佳牌型 展示
 void ShowWinner();//最贏
@@ -29,14 +45,16 @@ void RecordingMaxWinNumber(int *compareNum, int cardNumber);//記錄勝算編號
 /*Function索引*/
 
 /*公用參數*/
-vector<Card> publicCard;
-vector<Player> player;
-const int NUMBER_OF_CARDS = 52;
-Card poker[52];
-const int player_number = PlayerNumber();
-static int cardNumber = 0;
-int AllBet = 0;
-int Around = 0;
+int x = 0, y = 0;
+vector<Card> publicCard; //可擴充的公牌
+vector<Player> player;//可擴充的player
+const int NUMBER_OF_CARDS = 52; //poker牌有52張
+Card poker[NUMBER_OF_CARDS]; //52張Class poker牌
+int player_number = PlayerNumber(); //玩家數
+static int cardNumber = 0; //當前已用卡號至
+int AllBet = 0; //彩池
+int LastBet = 0; //上一注金額
+int Around = 0; //回合數
 /*公用參數*/
 
 //////////////////////////// Functions ////////////////////////////////////
@@ -47,7 +65,14 @@ int PlayerNumber()
 	int player = 0;
 	cout << "有幾個人: " << endl;
 	cin >> player;
+	system("cls");
 	return player;
+}
+//創造空值玩家資料
+void inputPlayerNullData()
+{
+	Player playertest;
+	for (int i = 0; i < player_number; i++) { player.push_back(playertest); }
 }
 //洗牌
 void ShufflePoker()
@@ -74,34 +99,183 @@ void ShufflePoker()
 		poker[i].setNumber(deck[i] % 13); //輸入數字
 	}
 }
-//印出公牌
-void ShowPublicCard(vector<Card> publicCard)
+//印遊戲介面
+void GameInterface()
 {
-	string suits[] = { "愛心","方塊","梅花","黑桃" };
-	string ranks[] = { "A","2","3","4","5","6","7","8","9","10","J","Q","K" };
-
-	cout << "--------------------------PublicCard"<< endl;
+	gotoxyGame(x, y + 1);
+	cout << "        __________  __________  __________  __________  __________ " << endl;
+	cout << " 公牌  |          ||          ||          ||          ||          |" << endl;
+	cout << "       |          ||          ||          ||          ||          |" << endl;
+	cout << "       |          ||          ||          ||          ||          |" << endl;
+	cout << "       |          ||          ||          ||          ||          |" << endl;
+	cout << "       |          ||          ||          ||          ||          |" << endl;
+	cout << "       |          ||          ||          ||          ||          |" << endl;
+	cout << "       |__________||__________||__________||__________||__________|" << endl << endl;
+	for (int y1 = 0; y1 < 25; y1++)
+	{
+		gotoxyGame(x + 68, y + y1); cout << "|";
+	}
+	gotoxyGame(x + 37, y + 12); cout << " ______________________________";
+	for (int y1 = 13; y1 < 25; y1++)
+	{
+		gotoxyGame(x + 37, y + y1); cout << "|";
+	}
+	gotoxyGame(x, y + 12);
+	cout << "        __________  __________" << endl;
+	cout << " 手牌  |          ||          |" << endl;
+	cout << "       |          ||          |" << endl;
+	cout << "       |          ||          |" << endl;
+	cout << "       |          ||          |" << endl;
+	cout << "       |          ||          |" << endl;
+	cout << "       |          ||          |" << endl;
+	cout << "       |__________||__________|" << endl << endl;
+}
+//印出公牌
+void ShowPublicCard()
+{
+	string species[] = { "紅心","方塊","梅花","黑桃" };
+	string ranks[] = { "Ａ"," ２","３","４","５","６","７","８","９","10","Ｊ","Ｑ","Ｋ" };
 	for (int i = 0; i < publicCard.size(); i++)
 	{
-		cout << suits[publicCard[i].getSpecies()] << " " <<left << setw(3) << ranks[publicCard[i].getNumber()] << endl;
+		switch (publicCard[i].getSpecies())
+		{
+		case 0:
+			gotoxyGame(x + 8 + (12 * i), y + 3); cout << "   ▲▲   ";
+			gotoxyGame(x + 8 + (12 * i), y + 4); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 5); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 6); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 7); cout << "    ▉    ";
+			break;
+		case 1:
+			gotoxyGame(x + 8 + (12 * i), y + 3); cout << "    ▉    ";
+			gotoxyGame(x + 8 + (12 * i), y + 4); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 5); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 6); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 7); cout << "    ▉    ";
+			break;
+		case 2:
+			gotoxyGame(x + 8 + (12 * i), y + 3); cout << "    ◆    ";
+			gotoxyGame(x + 8 + (12 * i), y + 4); cout << "   ◆◆   ";
+			gotoxyGame(x + 8 + (12 * i), y + 5); cout << " ◆◆◆◆ ";
+			gotoxyGame(x + 8 + (12 * i), y + 6); cout << "  ◆||◆  ";
+			gotoxyGame(x + 8 + (12 * i), y + 7); cout << "    ▅    ";
+			break;
+		case 3:
+			gotoxyGame(x + 8 + (12 * i), y + 3); cout << "    ▲    ";
+			gotoxyGame(x + 8 + (12 * i), y + 4); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 5); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 6); cout << " ▉ || ▉ ";
+			gotoxyGame(x + 8 + (12 * i), y + 7); cout << "    ▅    ";
+			break;
+		}
+		gotoxyGame(x + 8 + (12 * i), y + 2); cout << ranks[publicCard[i].getNumber()];
+		gotoxyGame(x + 16 + (12 * i), y + 7); cout << ranks[publicCard[i].getNumber()];
+		gotoxyGame(x + 10 + (12 * i), y + 10); cout << species[publicCard[i].getSpecies()] << ranks[publicCard[i].getNumber()];
 	}
+}
+//印出玩家的操作記錄列表
+void ShowPlayerOperatinglist()
+{
+	for (int i = 0; i < player_number; i++)
+	{
+		gotoxyGame(x + 69, y + 2 + i); cout << "P" << right << setw(2) << i + 1 << "     ";
+	}
+}
+
+//印出上一個玩家的操作記錄
+void ShowPlayerOperating(int playerNumber)
+{
+	static int PreviousplayerNumber = -1;
+	if (PreviousplayerNumber == -1)
+	{
+		gotoxyGame(x + 78, y + 2); cout << "<";
+		gotoxyGame(x + 39, y + 23); cout << "彩池：" << right << setw(8) << AllBet << " $  Player " << right << 1;
+	}
+	else
+	{
+		gotoxyGame(x + 78, y + 2 + playerNumber); cout << "<";
+		gotoxyGame(x + 78, y + 2 + PreviousplayerNumber); cout << " ";
+		gotoxyGame(x + 69, y + 2 + PreviousplayerNumber); cout << "P" << right << setw(2) << PreviousplayerNumber + 1 << " ";
+		switch (player[PreviousplayerNumber].getLastOperation())
+		{
+		case 1:cout << "加注"; break;
+		case 2:cout << "跟注"; break;
+		case 3:cout << "過牌"; break;
+		case 0:cout << "蓋牌"; break;
+		case 4:cout << "小盲"; break;
+		case 5:cout << "大盲"; break;
+		}
+		gotoxyGame(x + 64, y + 23); cout << "  ";
+		gotoxyGame(x + 39, y + 23); cout << "彩池：" << right << setw(8) << AllBet << " $  Player " << right << playerNumber+1;
+	}
+	PreviousplayerNumber = playerNumber;
 }
 //印出手牌
 void ShowPlayerCard(int playerNumber)
 {
-	string suits[] = { "愛心","方塊","梅花","黑桃" };
-	string ranks[] = { "A","2","3","4","5","6","7","8","9","10","J","Q","K" };
+	string species[] = { "紅心","方塊","梅花","黑桃" };
+	string ranks[] = { "Ａ","２","３","４","５","６","７","８","９","10","Ｊ","Ｑ","Ｋ" };
 
-	cout << "--------------------------Player" << playerNumber + 1 << endl;
 	for (int i = 0; i < 2; i++)
 	{
-		cout << suits[player[playerNumber].getCardSpecies(i)] << " " << left << setw(3) << ranks[player[playerNumber].getCardNumber(i)] << endl;
+		switch (player[playerNumber].getCardSpecies(i))
+		{
+		case 0:
+			gotoxyGame(x + 8 + (12 * i), y + 14); cout << "   ▲▲   ";
+			gotoxyGame(x + 8 + (12 * i), y + 15); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 16); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 17); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 18); cout << "    ▉    ";
+			break;
+		case 1:
+			gotoxyGame(x + 8 + (12 * i), y + 14); cout << "    ▉    ";
+			gotoxyGame(x + 8 + (12 * i), y + 15); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 16); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 17); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 18); cout << "    ▉    ";
+			break;
+		case 2:
+			gotoxyGame(x + 8 + (12 * i), y + 14); cout << "    ◆    ";
+			gotoxyGame(x + 8 + (12 * i), y + 15); cout << "   ◆◆   ";
+			gotoxyGame(x + 8 + (12 * i), y + 16); cout << " ◆◆◆◆ ";
+			gotoxyGame(x + 8 + (12 * i), y + 17); cout << "  ◆||◆  ";
+			gotoxyGame(x + 8 + (12 * i), y + 18); cout << "    ▅    ";
+			break;
+		case 3:
+			gotoxyGame(x + 8 + (12 * i), y + 14); cout << "    ▲    ";
+			gotoxyGame(x + 8 + (12 * i), y + 15); cout << "   ▉▉   ";
+			gotoxyGame(x + 8 + (12 * i), y + 16); cout << "  ▉▉▉  ";
+			gotoxyGame(x + 8 + (12 * i), y + 17); cout << " ▉ || ▉ ";
+			gotoxyGame(x + 8 + (12 * i), y + 18); cout << "    ▅    ";
+			break;
+		}
+		gotoxyGame(x + 8 + (12 * i), y + 13); cout << ranks[player[playerNumber].getCardNumber(i)];
+		gotoxyGame(x + 16 + (12 * i), y + 18); cout << ranks[player[playerNumber].getCardNumber(i)];
+		gotoxyGame(x + 10 + (12 * i), y +21); cout << species[player[playerNumber].getCardSpecies(i) ] << ranks[player[playerNumber].getCardNumber(i)];
 	}
-	cout << endl;
-	if (Around == 3) 
+	
+	if (Around == 5) 
 	{
 		MaxWinCards(playerNumber);
 	}
+}
+//手牌隱藏
+void HidePlayerCard()
+{
+	for (int i = 0; i < 2; i++)
+	{
+
+		for (int y1 = 13; y1 < 19; y1++)
+		{
+			gotoxyGame(x + 8 + (12 * i), y + y1); cout << "          ";
+		}
+		gotoxyGame(x + 10 + (12 * i), y + 21); cout << "      ";
+	}
+	for (int y1 = 0; y1 < 9; y1++)
+	{
+		gotoxyGame(x + 40, y +14 + y1); cout << "　　　　　　　　　　　　　　";
+	}
+	gotoxyGame(x + 79, y + 24);
 }
 //印最佳牌型
 void MaxWinCards(int playerNumber)
@@ -333,7 +507,172 @@ void RecordingMaxWinNumber(int* compareNum,int cardNumber)
 		}
 	}
 }
+//加注
+int addBet()
+{
+	int addBet;
+	while(1)
+	{
+		gotoxyGame(x + 49, y + 15); cout << "：                ";
+		gotoxyGame(x + 50, y + 15);
+		cin >> addBet;
+		if (addBet > (LastBet*2))
+		{
+			LastBet = addBet;
+			gotoxyGame(x + 50, y + 15);
+			Sleep(1000);
+			return addBet;
+		}
+		else
+		{
+			gotoxyGame(x + 53, y + 19); cout << "加注失敗 !";
+			Sleep(1000);
+			gotoxyGame(x + 53, y + 19); cout << "          ";
+		}
+	}
+}
 
+//玩家操作
+void PlayerOperating(int playerNumber)
+{
+	gotoxyGame(x + 40, y + 15); cout << "Ｒ　加　注　　";
+	gotoxyGame(x + 40, y + 17); cout << "Ｃ　跟　注　　";
+	gotoxyGame(x + 40, y + 19); cout << "Ｓ　過　牌　　";
+	gotoxyGame(x + 40, y + 21); cout << "Ｆ　蓋　牌　　";
+	gotoxyGame(x + 53, y + 17); cout << LastBet<<" $";
+	gotoxyGame(x + 79, y + 24);
+	while(1){
+		if (player[playerNumber].getLastOperation()==0){return;}//此玩家已棄牌
+		switch (_getch())
+		{
+		case 114://加　注
+			gotoxyGame(x + 38, y + 15); cout << ">";
+			//進加注介面(未寫)
+			for (int i = 0; i < player_number; i++)
+			{
+				if (player[i].getEnd() == true )
+				{
+					player[i].setEnd(false);
+				}
+			}
+			player[playerNumber].setEnd(true);
+			player[playerNumber].setLastOperation(1);
+			Sleep(2000); gotoxyGame(x + 38, y + 15); cout << " "; 
+			return;
+			break;
+		case 99://跟　注
+			gotoxyGame(x + 38, y + 17); cout << ">";
+			AllBet += LastBet;
+			player[playerNumber].setLastOperation(2);
+			Sleep(2000); gotoxyGame(x + 38, y + 17); cout << " "; 
+			return;
+			break;
+		case 115://過　牌
+			gotoxyGame(x + 38, y + 19); cout << ">";
+			player[playerNumber].setLastOperation(3);
+			Sleep(2000); gotoxyGame(x + 38, y + 19); cout << " "; 
+			return;
+			break;
+		case 102://蓋　牌
+			gotoxyGame(x + 38, y + 21); cout << ">";
+			player[playerNumber].setLastOperation(0);
+			Sleep(2000); gotoxyGame(x + 38, y + 21); cout << " "; 
+			return;
+			break;
+		}
+	}
+}
+//大小盲注
+void PlayerBlind(int playerNumber)
+{
+	static int Blind = 1;//盲注
+	switch (Blind)
+	{
+	case 1:
+		gotoxyGame(x + 40, y + 15); cout << "Ｂ　小　盲　注";
+		gotoxyGame(x + 79, y + 24);
+		break;
+	case 2:
+		gotoxyGame(x + 40, y + 15); cout << "Ｂ　大　盲　注";
+		gotoxyGame(x + 58, y + 15); cout << LastBet * 2 << " $";
+		gotoxyGame(x + 79, y + 24);
+		break;
+	}
+	while (1) {
+		if (player[playerNumber].getLastOperation() == 0) { return; }//此玩家已棄牌
+		switch (_getch())
+		{
+		case 98://小　盲　注
+			if (Blind == 1)
+			{
+				gotoxyGame(x + 38, y + 15); cout << ">";
+				//進加注介面(未寫)
+				player[playerNumber].setLastOperation(4);
+				Sleep(2000); gotoxyGame(x + 38, y + 15); cout << " ";
+				Blind++;
+			}
+			else//大　盲　注
+			{
+				gotoxyGame(x + 38, y + 15); cout << ">";
+				player[playerNumber].setLastOperation(5);
+				AllBet += LastBet * 2;
+				Sleep(2000); gotoxyGame(x + 38, y + 15); cout << " ";
+				Blind++;
+			}
+			return;
+			break;
+		}
+	}
+}
+//驗證
+void Verification()
+{
+	srand(time(0)); //取時間
+	int verificationNumber = (rand()%36)+1;
+	if(verificationNumber>=1 && verificationNumber <= 10)
+	{
+		verificationNumber += 47;
+	}
+	else {
+		if (verificationNumber >= 11 && verificationNumber <= 36)
+		{
+			verificationNumber += 86;
+		}
+	}
+	gotoxyGame(x + 10, y + 16); cout << "驗證:";
+	gotoxyGame(x + 24, y + 16); cout << char(verificationNumber);
+	gotoxyGame(x + 79, y + 24);
+	while (1)
+	{
+		if (_getch()== verificationNumber)
+		{
+			gotoxyGame(x + 10, y + 16); cout << "     ";
+			gotoxyGame(x + 24, y + 16); cout << " ";
+			return;
+		}
+	}
+}
+//
+bool CheckAddBet()
+{
+	for (int i = 0; i < player_number; i++)
+	{
+		if (player[i].getEnd() == true)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+//
+void Revert_CheckAddBet_and_PlayerOperating()
+{
+	for (int i = 0; i < player_number; i++)
+	{
+		player[i].setEnd(false);
+		player[i].setLastOperation(-1);
+	}
+}
 
 //遊戲函式
 void MultiplayerGame()
@@ -341,96 +680,91 @@ void MultiplayerGame()
 	int Place_a_bet = 0;
 	int winPlayer = 0;
 	int Maxwin = 0;
+	/*初始遊戲*/
 	ShufflePoker(); //洗牌function
-
-	Player playertest;
-	for (int i = 0; i < player_number; i++)
+	inputPlayerNullData(); //初始玩家Data
+	GameInterface(); // 初始遊戲介面
+	/*初始遊戲*/
+	ShowPlayerOperatinglist();
+	gotoxyGame(x + 79, y + 24);
+	//盲注time start
+	gotoxyGame(x + 71, y); cout << "盲   注";
+	for (int i = 0; i < 2; i++)
 	{
-		player.push_back(playertest);
+		ShowPlayerOperating(i);
+		PlayerBlind(i);
+		HidePlayerCard();
 	}
-
-		cout << "目前彩池" << AllBet << "    Player " << 1 << endl;
-		cout << "小盲注下多少: ";
-		cin >> Place_a_bet;
-		AllBet += Place_a_bet;
-		cout << endl << endl << "按任意鍵下一位" << endl;
-		_getch();
-
-		system("cls");
-		cout << "目前彩池" << AllBet << "    Player " << 2 << endl;
-		cout << "強制下大盲注:  "<< Place_a_bet*2;
-		AllBet += (Place_a_bet*2);
-		cout << endl << endl << "按任意鍵下一位" << endl;
-		_getch();
-
-		inputPlayerCard();
-	//印自己+下注
-	for (int j = 2; j < player_number; j++)
+	inputPlayerCard();//發手牌
+	//盲注time over
+	/*第一回合 start*/
+	Around++; gotoxyGame(x + 71, y); cout << "第 " << Around << " 局";
+	//發手牌後由第3位玩家開始下注  (只有兩位玩家會跳過此步)
+	for (int i = 2; i < player_number; i++)
 	{
-		system("cls");
-		cout << "目前彩池" << AllBet <<"    Player "<< j+1 << endl;
-		ShowPlayerCard(j);
-		cout << "下注多少: ";
-		cin >> Place_a_bet;
-		AllBet += Place_a_bet;
-		cout << endl << endl << "按任意鍵下一位" << endl;
-		_getch();
+		ShowPlayerOperating(i);
+		Verification();
+		ShowPlayerCard(i);
+		PlayerOperating(i);
+		HidePlayerCard();
 	}
-	for (int j = 0; j < 2; j++)
+	for (int i = 0; i < 2; i++)
 	{
-		system("cls");
-		cout << "目前彩池" << AllBet << "    Player " << j+1 << endl;
-		ShowPlayerCard(j);
-		cout << "下注多少: ";
-		cin >> Place_a_bet;
-		AllBet += Place_a_bet;
-		cout << endl << endl << "按任意鍵下一位"<<endl;
-		_getch();
+		ShowPlayerOperating(i);
+		Verification();
+		ShowPlayerCard(i);
+		PlayerOperating(i);
+		HidePlayerCard();
 	}
-	lostCard(); inputPublicCard(); inputPublicCard(); inputPublicCard();//棄一牌 發公牌*3
-	for (int j = 0; j < player_number; j++)
+	/*第一回合 end*/
+	/*第二~四回合 start*/
+	for(int tep=0;tep<3;)
 	{
-		system("cls");
-		cout << "目前彩池" << AllBet << "    Player " << j + 1 << endl;
-		ShowPublicCard(publicCard);
-		ShowPlayerCard(j);
-		cout << "下注多少: ";
-		cin >> Place_a_bet;
-		AllBet += Place_a_bet;
-		cout << endl << endl << "按任意鍵下一位" << endl;
-		_getch();
-	}
-	Around++;
-	lostCard(); inputPublicCard(); ;//棄一牌 發公牌+1
-	for (int j = 0; j < player_number; j++)
-	{
-		system("cls");
-		cout << "目前彩池" << AllBet << "    Player " << j + 1 << endl;
-		ShowPublicCard(publicCard);
-		ShowPlayerCard(j);
-		cout << "下注多少: ";
-		cin >> Place_a_bet;
-		AllBet += Place_a_bet;
-		cout << endl << endl << "按任意鍵下一位" << endl;
-		_getch();
-	}
-	Around++;
-	lostCard(); inputPublicCard(); ;//棄一牌 發公牌+1
-	for (int j = 0; j < player_number; j++)
-	{
-		system("cls");
-		cout << "目前彩池" << AllBet << "    Player " << j + 1 << endl;
-		ShowPublicCard(publicCard);
-		ShowPlayerCard(j);
-		cout << "下注多少: ";
-		cin >> Place_a_bet;
-		AllBet += Place_a_bet;
-		cout << endl << endl << "按任意鍵下一位" << endl;
-		_getch();
-	}
-	Around++;
+		Revert_CheckAddBet_and_PlayerOperating();
+		ShowPlayerOperatinglist();
+		bool around_cards=true;
+		if (tep == 0)
+		{
+			lostCard(); inputPublicCard(); inputPublicCard(); inputPublicCard();//棄一牌 發公牌*3
+			ShowPublicCard();//開公牌
+		}
+		else
+		{
+			lostCard(); inputPublicCard();//棄一牌 發公牌
+			ShowPublicCard();//開公牌
+		}
+		Around++;	gotoxyGame(x + 71, y); cout << "第 " << Around << " 局";
 
+		while (around_cards)
+		{
+			for (int i = 0; i < player_number; i++)
+			{
+				if (player[i].getEnd() == true)
+				{
+					player[i].setEnd(false);
+					around_cards = false;
+					break;
+				}
+				else
+				{
+						ShowPlayerOperating(i);
+						Verification();
+						ShowPlayerCard(i);
+						PlayerOperating(i);
+						HidePlayerCard();
+				}
+			}
+			if (!CheckAddBet())
+			{
+				around_cards = false;
+			}
+		}
+		tep++;
+	}
+	/*第二~四回合 end*/
 
+	system("cls"); gotoxyGame(x, y);
+	/*比輸贏*/
 	for (int j = 0; j < player_number; j++)
 	{
 		Public_Player_combination(j);
@@ -439,5 +773,7 @@ void MultiplayerGame()
 	{
 		ShowPlayerCard(j);
 	}
-	ShowWinner();
+	ShowWinner();_getch();
+	system("cls"); gotoxyGame(x, y);
+	/*比輸贏*/
 }

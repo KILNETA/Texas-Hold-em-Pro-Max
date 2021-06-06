@@ -1,9 +1,7 @@
-﻿#ifndef Title_CPP
-#define Title_CPP
-
-#include<iostream>
+﻿#include<iostream>
 #include<iomanip>
 #include <windows.h>
+#include <conio.h>
 
 #include<Mmsystem.h>
 #pragma comment(lib,"winmm.lib")
@@ -18,6 +16,84 @@ void gotoxy(double x, double y)
 	dwPos.X = x; // start from 0
 	dwPos.Y = y; // start from 0
 	SetConsoleCursorPosition(hCon, dwPos);
+}
+
+//主畫面
+int MainScreen()
+{
+	int x = 0, y = 0;
+	gotoxy(x + 45, y + 5); cout << "  __________   ▁";
+	gotoxy(x + 45, y + 6); cout << "||          |/    \\";
+	gotoxy(x + 45, y + 7); cout << "|| Texas    |  20 $|\\";
+	gotoxy(x + 45, y + 8); cout << "||    hold  |\\ ▁ / $|";
+	gotoxy(x + 45, y + 9); cout << "||      'em |　 |▁ /";
+	gotoxy(x + 45, y + 10); cout << "||          |   |";
+	gotoxy(x + 45, y + 11); cout << "|| Game     ▍  |";
+	gotoxy(x + 45, y + 12); cout << "||__________▉  |";
+	gotoxy(x + 45, y + 13); cout << "     |   ▉▉   |";
+	gotoxy(x + 45, y + 14); cout << "     |    ▉  Ａ|";
+	gotoxy(x + 45, y + 15); cout << "     |_________ |";
+	gotoxy(x + 40, y + 19); cout << "Ｔｅｘａｓ ｈｏｌｄ'ｅｍ Ｇａｍｅ";
+	gotoxy(x + 12, y + 15); cout << "單 人 遊 戲";
+	gotoxy(x + 12, y + 17); cout << "多 人 遊 戲";
+	gotoxy(x + 12, y + 19); cout << "設       定";
+	gotoxy(x + 12, y + 21); cout << "離 開 遊 戲";
+
+	bool the_break=true;
+	int select = 1;
+
+	while (the_break)
+	{
+		gotoxy(x + 10, y + 15); cout << " ";
+		gotoxy(x + 10, y + 17); cout << " ";
+		gotoxy(x + 10, y + 19); cout << " ";
+		gotoxy(x + 10, y + 21); cout << " ";
+
+		gotoxy(x + 10, y + 13+(select*2)); cout << ">";
+		gotoxy(x + 79, y + 24);
+		switch (_getch())
+		{
+		case 72: 
+			if (select > 1) { select--; }//up
+			break;
+		case 80: 
+			if (select < 4) { select++; }//up
+			//down
+			break;
+		case 13:
+			the_break = false; //enter
+			break;
+		}
+	}
+	system("cls");
+	return select;
+}
+
+//設定
+void Enactment()
+{
+	int x = 0, y = 0;
+
+	bool the_break = true;
+	int select = 1;
+
+	while (1)
+	{
+
+		switch (_getch())
+		{
+		case 72:
+			if (select > 1) { select--; }//up
+			break;
+		case 80:
+			if (select < 5) { select++; }//up
+			//down
+			break;
+		case 13:
+			the_break = false; //enter
+			break;
+		}
+	}
 }
 
 //片頭 //漸逝
@@ -574,5 +650,3 @@ void Title()
 	gotoxy(x - 30, y + 15); cout << "╚═══╩══╩══╩══╝╚═══╩══╩══╩╝╚╝╚╝";
 	Sleep(3100); Title_lost(x, y); }
 }
-
-#endif
