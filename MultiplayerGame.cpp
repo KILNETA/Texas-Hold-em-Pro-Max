@@ -35,9 +35,7 @@ void ShowPublicCard();//印出公牌
 void ShowPlayerOperating(int playerNumber);//印出所有玩家上一次的操作記錄
 void ShowPlayerCard(int playerNumber);//印出手牌
 void HidePlayerCard();//手牌隱藏
-void MaxWinCards(int playerNumber);//印最佳牌型
-void ShowMaxWinCards(int playerNumber);//最佳牌型 展示
-void ShowWinner();//最贏
+int ShowWinner();//最贏
 
 void Public_Player_combination(int playerNumber);//自公牌與手牌取5張組合 (4次)
 void CheckCard(vector<Card> Cards,int player);//判斷牌型
@@ -306,12 +304,7 @@ void ShowPlayerCard(int playerNumber)
 		}
 		gotoxyGame(x + 8 + (12 * i), y + 13); cout << ranks[player[playerNumber].getCardNumber(i)];
 		gotoxyGame(x + 16 + (12 * i), y + 18); cout << ranks[player[playerNumber].getCardNumber(i)];
-		gotoxyGame(x + 10 + (12 * i), y +21); cout << species[player[playerNumber].getCardSpecies(i) ] << ranks[player[playerNumber].getCardNumber(i)];
-	}
-	
-	if (Around == 5) 
-	{
-		MaxWinCards(playerNumber);
+		gotoxyGame(x + 10 + (12 * i), y + 21); cout << species[player[playerNumber].getCardSpecies(i)] << ranks[player[playerNumber].getCardNumber(i)];
 	}
 }
 //手牌隱藏
@@ -332,76 +325,49 @@ void HidePlayerCard()
 	}
 	gotoxyGame(x + 79, y + 24);
 }
-//印最佳牌型
-void MaxWinCards(int playerNumber)
-{
-	switch (player[playerNumber].getMaxWinMode())
-	{
-	case 10:cout << "　　　\"皇家同花順\"" ; break;
-	case 9:cout << "　　　\"同花順\"" ; break;
-	case 8:cout << "　　　\"四條\"" ; break;
-	case 7:cout << "　　　\"葫蘆\"" ; break;
-	case 6:cout << "　　　\"同花\"" ; break;
-	case 5:cout << "　　　\"順子\"" ; break;
-	case 4:cout << "　　　\"三條\"" ; break;
-	case 3:cout << "　　　\"兩對\"" ; break;
-	case 2:cout << "　　　\"一對\"" ; break;
-	case 1:cout << "　　　\"散牌\"" ; break;
-	}
-	cout << "　　";
-	ShowMaxWinCards(playerNumber);
-}
-//最佳牌型 展示
-void ShowMaxWinCards(int playerNumber)
-{
-	string suits[] = { "愛心","方塊","梅花","黑桃" };
-	string ranks[] = { "A","2","3","4","5","6","7","8","9","10","J","Q","K" };
-	for (int i = 0; i < 5; i++)
-	{
-		cout << suits[player[playerNumber].getMaxWinCardsSpecies(i)] << " " << left <<setw(3)<< ranks[player[playerNumber].getMaxWinCardsNumber(i)] << "　";
-	}
-	cout << endl;
-}
 //最贏
-void ShowWinner()
+int ShowWinner()
 {
 	static int nowWinnerPlayerNumber = 0;
 	static int nowWinnerPlayerMaxWinNumber[5] = { 0 };
 	static int nowWinnerPlayerMaxWinMode = 0;
 	for(int j=0;j< player_number;j++)
 	{
-		for (int i = 0; i < 5; i++)
+		if(!player[j].getFold())
 		{
-			if (nowWinnerPlayerMaxWinMode < player[j].getMaxWinMode())
+			for (int i = 0; i < 5; i++)
 			{
-				nowWinnerPlayerNumber = j + 1;
-				nowWinnerPlayerMaxWinMode = player[j].getMaxWinMode();
-				for(int i=0;i<5;i++)
+				if (nowWinnerPlayerMaxWinMode < player[j].getMaxWinMode())
 				{
-					nowWinnerPlayerMaxWinNumber[i] = player[j].getMaxWinNumber(i);
-				}
-			}
-			else
-			{ 
-				if (nowWinnerPlayerMaxWinMode == player[j].getMaxWinMode())
-				{
-					for (int i = 0; i < 5; i++)
+					nowWinnerPlayerNumber = j ;
+					nowWinnerPlayerMaxWinMode = player[j].getMaxWinMode();
+					for(int i=0;i<5;i++)
 					{
-						if (nowWinnerPlayerMaxWinNumber[i] < player[j].getMaxWinNumber(i))
+						nowWinnerPlayerMaxWinNumber[i] = player[j].getMaxWinNumber(i);
+					}
+				}
+				else
+				{ 
+					if (nowWinnerPlayerMaxWinMode == player[j].getMaxWinMode())
+					{
+						for (int i = 0; i < 5; i++)
 						{
-							nowWinnerPlayerNumber = j + 1;
-							for (int f = 0; f < 5; f++)
+							if (nowWinnerPlayerMaxWinNumber[i] < player[j].getMaxWinNumber(i))
 							{
-								nowWinnerPlayerMaxWinNumber[f] = player[j].getMaxWinNumber(f);
+								nowWinnerPlayerNumber = j ;
+								for (int f = 0; f < 5; f++)
+								{
+									nowWinnerPlayerMaxWinNumber[f] = player[j].getMaxWinNumber(f);
+								}
+								break;
 							}
-							break;
 						}
 					}
 				}
 			}
 		}
 	}
-	cout << "--------------------------------Winner is Player" << nowWinnerPlayerNumber << endl;
+	return nowWinnerPlayerNumber;
 }
 
 //發公牌
@@ -494,9 +460,9 @@ void CheckCard(vector<Card> Cards,int playerNumber)
 {
 	int flush = 0, straight = 0, four_of_a_kind = 0, three_of_a_king = 0, i;
 	int pair = 0, count = 0, a_straight = 0, start, end=0;
-	int kind[4] = { 0 }, scard[13] = { 0 }; // 4種花色 13個卡號
+	int kind[4] = { 0 }, scard[13] = {}; // 4種花色 13個卡號
 	int compareNum[5] = {};
-	Card Cards_2[5]{};
+	Card Cards_2[5]={};
 
 	for (i = 0; i < 5; i++)
 	{
@@ -798,6 +764,157 @@ void Revert_CheckAddBet_and_PlayerOperating()
 		player[i].setLastOperation(-1);
 	}
 }
+//
+void ShowEndingPlayerResult()
+{
+	int winner = ShowWinner();
+	string suits[] = { "愛心","方塊","梅花","黑桃" };
+	string ranks[] = { "Ａ","２","３","４","５","６","７","８","９","10","Ｊ","Ｑ","Ｋ" };
+	int playerNumber = 0;
+	gotoxyGame(x + 24, y + 4); cout << "玩 家 最 大 牌 型";
+	for (int i = 0; i < 25; i++)
+	{
+		gotoxyGame(x + 66, y + i); cout << "|";
+	}
+	gotoxyGame(x + 67, y + 16); cout << "＿＿＿＿＿＿";
+	gotoxyGame(x + 70, y + 1); cout << "最佳";
+	gotoxyGame(x + 70, y + 2); cout << "組合:";
+	switch (player[winner].getMaxWinMode())
+	{
+	case 10:gotoxyGame(x + 68, y + 4);  cout << "皇家同花順"; break;
+	case 9:gotoxyGame(x + 70, y + 4); cout << "同花順"; break;
+	case 8:gotoxyGame(x + 71, y + 4); cout << "四條"; break;
+	case 7:gotoxyGame(x + 71, y + 4); cout << "葫蘆"; break;
+	case 6:gotoxyGame(x + 71, y + 4); cout << "同花"; break;
+	case 5:gotoxyGame(x + 71, y + 4); cout << "順子"; break;
+	case 4:gotoxyGame(x + 71, y + 4); cout << "三條"; break;
+	case 3:gotoxyGame(x + 71, y + 4); cout << "兩對"; break;
+	case 2:gotoxyGame(x + 71, y + 4); cout << "一對"; break;
+	case 1:gotoxyGame(x + 71, y + 4); cout << "散牌"; break;
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		gotoxyGame(x + 70, y + 6+i);
+		cout << suits[player[winner].getMaxWinCardsSpecies(i)] << ranks[player[winner].getMaxWinCardsNumber(i)];
+	}
+	gotoxyGame(x + 71, y + 12); cout << "彩池:";
+	gotoxyGame(x + 68, y + 14); cout <<right<<setw(8)<< AllBet <<" $";
+	gotoxyGame(x + 70, y + 24); cout << "Esc 離開";
+
+	while (1)
+	{
+		gotoxyGame(x + 71, y + 18); cout << "    ";
+		if (player[playerNumber].getFold())
+		{
+			gotoxyGame(x + 71, y + 18); cout << "棄牌";
+		}
+		else
+		{
+			if (player[playerNumber].getMaxWinMode()== player[winner].getMaxWinMode())
+			{
+				if (player[playerNumber].getMaxWinCardsNumber(0) == player[winner].getMaxWinCardsNumber(0))
+				{
+					if (player[playerNumber].getMaxWinCardsNumber(1) == player[winner].getMaxWinCardsNumber(1))
+					{
+						if (player[playerNumber].getMaxWinCardsNumber(2) == player[winner].getMaxWinCardsNumber(2))
+						{
+							if (player[playerNumber].getMaxWinCardsNumber(3) == player[winner].getMaxWinCardsNumber(3))
+							{
+								if (player[playerNumber].getMaxWinCardsNumber(4) == player[winner].getMaxWinCardsNumber(4))
+								{
+									gotoxyGame(x + 71, y + 18); cout << "贏家";
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (playerNumber == 0) { gotoxyGame(x + 69, y + 22); cout << " "; }
+		else { gotoxyGame(x + 69, y + 22); cout << "<"; }
+		if (playerNumber == player_number - 1) { gotoxyGame(x + 76, y + 22); cout << " "; }
+		else { gotoxyGame(x + 76, y + 22); cout << ">"; }
+
+		gotoxyGame(x + 75, y + 20); cout << "  ";
+		gotoxyGame(x + 68, y + 20); cout << "Player " << right << setw(2) << playerNumber + 1;
+
+		gotoxyGame(x + 27, y + 8);  cout << "          ";
+		switch (player[playerNumber].getMaxWinMode())
+		{
+		case 10:gotoxyGame(x + 27, y+7);  cout << "皇家同花順"; break;
+		case 9:gotoxyGame(x + 29, y + 7); cout << "同花順"; break;
+		case 8:gotoxyGame(x + 30, y + 7); cout << "四條"; break;
+		case 7:gotoxyGame(x + 30, y + 7); cout << "葫蘆"; break;
+		case 6:gotoxyGame(x + 30, y + 7); cout << "同花"; break;
+		case 5:gotoxyGame(x + 30, y + 7); cout << "順子"; break;
+		case 4:gotoxyGame(x + 30, y + 7); cout << "三條"; break;
+		case 3:gotoxyGame(x + 30, y + 7); cout << "兩對"; break;
+		case 2:gotoxyGame(x + 30, y + 7); cout << "一對"; break;
+		case 1:gotoxyGame(x + 30, y + 7); cout << "散牌"; break;
+		}
+		gotoxyGame(x, y + 9);
+		cout << "     __________  __________  __________  __________  __________ " << endl;
+		cout << "   |          ||          ||          ||          ||          |" << endl;
+		cout << "   |          ||          ||          ||          ||          |" << endl;
+		cout << "   |          ||          ||          ||          ||          |" << endl;
+		cout << "   |          ||          ||          ||          ||          |" << endl;
+		cout << "   |          ||          ||          ||          ||          |" << endl;
+		cout << "   |          ||          ||          ||          ||          |" << endl;
+		cout << "   |__________||__________||__________||__________||__________|" << endl << endl;
+		for (int i = 0; i < 5; i++)
+		{
+			switch (player[playerNumber].getMaxWinCardsSpecies(i))
+			{
+			case 0:
+				gotoxyGame(x + 4 + (12 * i), y + 11); cout << "   ▲▲   ";
+				gotoxyGame(x + 4 + (12 * i), y + 12); cout << "  ▉▉▉  ";
+				gotoxyGame(x + 4 + (12 * i), y + 13); cout << "  ▉▉▉  ";
+				gotoxyGame(x + 4 + (12 * i), y + 14); cout << "   ▉▉   ";
+				gotoxyGame(x + 4 + (12 * i), y + 15); cout << "    ▉    ";
+				break;
+			case 1:
+				gotoxyGame(x + 4 + (12 * i), y + 11); cout << "    ▉    ";
+				gotoxyGame(x + 4 + (12 * i), y + 12); cout << "   ▉▉   ";
+				gotoxyGame(x + 4 + (12 * i), y + 13); cout << "  ▉▉▉  ";
+				gotoxyGame(x + 4 + (12 * i), y + 14); cout << "   ▉▉   ";
+				gotoxyGame(x + 4 + (12 * i), y + 15); cout << "    ▉    ";
+				break;
+			case 2:
+				gotoxyGame(x + 4 + (12 * i), y + 11); cout << "    ◆    ";
+				gotoxyGame(x + 4 + (12 * i), y + 12); cout << "   ◆◆   ";
+				gotoxyGame(x + 4 + (12 * i), y + 13); cout << " ◆◆◆◆ ";
+				gotoxyGame(x + 4 + (12 * i), y + 14); cout << "  ◆||◆  ";
+				gotoxyGame(x + 4 + (12 * i), y + 15); cout << "    ▅    ";
+				break;
+			case 3:
+				gotoxyGame(x + 4 + (12 * i), y + 11); cout << "    ▲    ";
+				gotoxyGame(x + 4 + (12 * i), y + 12); cout << "   ▉▉   ";
+				gotoxyGame(x + 4 + (12 * i), y + 13); cout << "  ▉▉▉  ";
+				gotoxyGame(x + 4 + (12 * i), y + 14); cout << " ▉ || ▉ ";
+				gotoxyGame(x + 4 + (12 * i), y + 15); cout << "    ▅    ";
+				break;
+			}
+			gotoxyGame(x + 4 + (12 * i), y + 10); cout << ranks[player[playerNumber].getMaxWinCardsNumber(i)];
+			gotoxyGame(x + 12 + (12 * i), y + 15); cout << ranks[player[playerNumber].getMaxWinCardsNumber(i)];
+			gotoxyGame(x+6+(12*i), y + 18);
+			cout << suits[player[playerNumber].getMaxWinCardsSpecies(i)]<< ranks[player[playerNumber].getMaxWinCardsNumber(i)];
+		}
+		gotoxyGame(x+79, y+24);
+		switch(_getch())
+		{
+		case 75:
+			if (playerNumber > 0) { playerNumber--; }//left
+			break;
+		case 77:
+			if (playerNumber < player_number-1) { playerNumber++; }//right
+			break;
+		case 27://esc
+			return;
+			break;
+		}
+	}
+}
 
 //遊戲函式
 void MultiplayerGame()
@@ -907,18 +1024,13 @@ void MultiplayerGame()
 		tep++;
 	}
 	/*第二~四回合 end*/
-
 	system("cls"); gotoxyGame(x, y);
 	/*比輸贏*/
+	Around++;
 	for (int j = 0; j < player_number; j++)
 	{
 		if (AllBetExplosion) { break; }
 		Public_Player_combination(j);
-	}
-	for (int j = 0; j < player_number; j++)
-	{
-		if (AllBetExplosion) { break; }
-		ShowPlayerCard(j);
 	}
 
 
@@ -928,9 +1040,8 @@ void MultiplayerGame()
 	}
 	else 
 	{ 
-		ShowWinner(); 
+		ShowEndingPlayerResult();
 	}
-	_getch();
 	system("cls"); gotoxyGame(x, y);
 	/*比輸贏*/
 }
