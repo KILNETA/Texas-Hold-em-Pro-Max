@@ -16,12 +16,16 @@ using namespace std;
 
 int main()
 {
+	PlaySound(L"Music\\MainScreen_JazzSong.WAV", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	while (1)
 	{
 		switch (MainScreen())
 		{
 		case 1:break;//單 人 遊 戲
-		case 2:MultiplayerGame(); break;//多 人 遊 戲
+		case 2:
+			MultiplayerGame();
+			PlaySound(L"", NULL, NULL);
+			break;//多 人 遊 戲
 		case 3:break;//設       置
 		case 4: return 0; break;//離 開 遊 戲
 		}

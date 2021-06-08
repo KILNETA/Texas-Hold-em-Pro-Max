@@ -12,6 +12,7 @@ private:
 	Card MaxWinCards[5] = {};
 	int LastOperation = -1;
 	bool End = false;
+	bool Fold = false;
 
 	bool CalculationMaxWinNumber(int[]);
 	void ArrangeCards();
@@ -23,6 +24,7 @@ public:
 	void setMaxWin(int, int[], Card[]);
 	void setLastOperation(int);
 	void setEnd(bool);
+	void Folding();
 
 	int getCardNumber(int);
 	int getCardSpecies(int);
@@ -33,6 +35,7 @@ public:
 	int getMaxWinNumber(int);
 	int getLastOperation();
 	bool getEnd();
+	bool getFold();
 
 };
 

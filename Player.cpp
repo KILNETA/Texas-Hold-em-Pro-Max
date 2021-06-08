@@ -73,6 +73,10 @@ void Player::setEnd(bool end)
 {
 	End = end;
 }
+void Player::Folding()
+{
+	Fold = true;
+}
 
 
 int Player::getCardNumber(int num)
@@ -111,4 +115,8 @@ int Player::getLastOperation()
 bool Player::getEnd()
 {
 	return End;
+}
+bool Player::getFold()
+{
+	return Fold;
 }
