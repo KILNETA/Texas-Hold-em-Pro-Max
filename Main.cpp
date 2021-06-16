@@ -16,11 +16,10 @@ using namespace std;
 
 int main()
 {
-	_getch();
 	Title();
-	PlaySound(L"Music\\MainScreen_JazzSong.WAV", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	while (1)
 	{
+		PlaySound(L"Music\\MainScreen_JazzSong.WAV", NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 		switch (MainScreen())
 		{
 		case 1:break;//單 人 遊 戲

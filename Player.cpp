@@ -77,6 +77,10 @@ void Player::Folding()
 {
 	Fold = true;
 }
+void Player::setBot()
+{
+	bot = true;
+}
 
 
 int Player::getCardNumber(int num)
@@ -119,4 +123,8 @@ bool Player::getEnd()
 bool Player::getFold()
 {
 	return Fold;
+}
+bool Player::getBot()
+{
+	return bot;
 }

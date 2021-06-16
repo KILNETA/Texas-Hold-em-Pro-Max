@@ -268,6 +268,7 @@ void ShowPlayerCard(int playerNumber)
 {
 	string species[] = { "紅心","方塊","梅花","黑桃" };
 	string ranks[] = { "Ａ","２","３","４","５","６","７","８","９","10","Ｊ","Ｑ","Ｋ" };
+	if (player[playerNumber].getBot() == true){return;}
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -335,32 +336,29 @@ int ShowWinner()
 	{
 		if(!player[j].getFold())
 		{
-			for (int i = 0; i < 5; i++)
+			if (nowWinnerPlayerMaxWinMode < player[j].getMaxWinMode())
 			{
-				if (nowWinnerPlayerMaxWinMode < player[j].getMaxWinMode())
+				nowWinnerPlayerNumber = j ;
+				nowWinnerPlayerMaxWinMode = player[j].getMaxWinMode();
+				for(int i=0;i<5;i++)
 				{
-					nowWinnerPlayerNumber = j ;
-					nowWinnerPlayerMaxWinMode = player[j].getMaxWinMode();
-					for(int i=0;i<5;i++)
-					{
-						nowWinnerPlayerMaxWinNumber[i] = player[j].getMaxWinNumber(i);
-					}
+					nowWinnerPlayerMaxWinNumber[i] = player[j].getMaxWinNumber(i);
 				}
-				else
-				{ 
-					if (nowWinnerPlayerMaxWinMode == player[j].getMaxWinMode())
+			}
+			else
+			{
+				if (nowWinnerPlayerMaxWinMode == player[j].getMaxWinMode())
+				{
+					for (int i = 0; i < 5; i++)
 					{
-						for (int i = 0; i < 5; i++)
+						if (nowWinnerPlayerMaxWinNumber[i] < player[j].getMaxWinNumber(i))
 						{
-							if (nowWinnerPlayerMaxWinNumber[i] < player[j].getMaxWinNumber(i))
+							nowWinnerPlayerNumber = j;
+							for (int f = 0; f < 5; f++)
 							{
-								nowWinnerPlayerNumber = j ;
-								for (int f = 0; f < 5; f++)
-								{
-									nowWinnerPlayerMaxWinNumber[f] = player[j].getMaxWinNumber(f);
-								}
-								break;
+								nowWinnerPlayerMaxWinNumber[f] = player[j].getMaxWinNumber(f);
 							}
+							break;
 						}
 					}
 				}
@@ -461,7 +459,7 @@ void CheckCard(vector<Card> Cards,int playerNumber)
 	int flush = 0, straight = 0, four_of_a_kind = 0, three_of_a_king = 0, i;
 	int pair = 0, count = 0, a_straight = 0, start, end=0;
 	int kind[4] = { 0 }, scard[13] = {}; // 4種花色 13個卡號
-	int compareNum[5] = {};
+	int compareNum[5] = {-1,-1,-1,-1,-1};
 	Card Cards_2[5]={};
 
 	for (i = 0; i < 5; i++)
@@ -521,7 +519,7 @@ void RecordingMaxWinNumber(int* compareNum,int cardNumber)
 {
 	for (int i=0;i<5;i++)
 	{
-		if (*(compareNum + i) == 0)
+		if (*(compareNum + i) == -1)
 		{
 			*(compareNum + i) = cardNumber;
 			return;
@@ -616,6 +614,73 @@ void PlayerOperating(int playerNumber)
 	gotoxyGame(x + 79, y + 24);
 	while(1){
 		if (player[playerNumber].getFold()){return;}//此玩家已棄牌
+		if (player[playerNumber].getBot() == true)
+		{
+			while(1)
+			{
+				int num = rand() % 10 + 1;
+				if (num==1|| num == 2) 
+				{	//加　注
+					LastBet = LastBet * 2;
+					AllBet += LastBet;
+					gotoxyGame(x + 38, y + 15); cout << ">";
+					player[playerNumber].setEnd(true);
+					player[playerNumber].setLastOperation(1);
+					if (AllBetExplosion) { return; }
+					gotoxyGame(x + 38, y + 15); cout << " ";
+					PreviousplayerNumber = playerNumber;
+					return;
+				}
+				if (num == 3 || num == 4|| num == 5 || num == 6 || num == 7) 
+				{	//跟　注
+					gotoxyGame(x + 38, y + 17); cout << ">";
+					AllBet += LastBet;
+					gotoxyGame(x + 39, y + 23); cout << "彩池：" << right << setw(8) << AllBet << " $";
+					gotoxyGame(x + 39, y + 17);
+					player[playerNumber].setLastOperation(2);
+					AllBetExplosionVerification();
+					if (AllBetExplosion) { return; }
+					gotoxyGame(x + 38, y + 17); cout << " ";
+					PreviousplayerNumber = playerNumber;
+					return;
+				}
+				if (num == 8 || num == 9)
+				{	//過　牌
+					if (PreviousplayerNumber != -1)
+					{
+						if (player[PreviousplayerNumber].getLastOperation() != 1 && First_lap)
+						{
+							gotoxyGame(x + 38, y + 19); cout << ">";
+							player[playerNumber].setLastOperation(3);
+							gotoxyGame(x + 38, y + 19); cout << " ";
+							PreviousplayerNumber = playerNumber;
+							return;
+						}
+					}
+					else
+					{
+						gotoxyGame(x + 38, y + 17); cout << ">";
+						AllBet += LastBet;
+						gotoxyGame(x + 39, y + 23); cout << "彩池：" << right << setw(8) << AllBet << " $";
+						gotoxyGame(x + 39, y + 17);
+						player[playerNumber].setLastOperation(2);
+						AllBetExplosionVerification();
+						if (AllBetExplosion) { return; }
+						gotoxyGame(x + 38, y + 17); cout << " ";
+						PreviousplayerNumber = playerNumber;
+						return;
+					}
+				}
+				if (num == 10)
+				{	//蓋　牌
+					gotoxyGame(x + 38, y + 21); cout << ">";
+					player[playerNumber].Folding();
+					gotoxyGame(x + 38, y + 21); cout << " ";
+					PreviousplayerNumber = playerNumber;
+					return;
+				}
+			}
+		}
 		switch (_getch())
 		{
 		case 114://加　注
@@ -688,6 +753,29 @@ void PlayerBlind(int playerNumber,int Blind)
 		break;
 	}
 	while (1) {
+		if (player[playerNumber].getBot() == true)
+		{
+			if (Blind == 1)
+			{
+				gotoxyGame(x + 38, y + 15); cout << ">";
+				LastBet = LastBet + 20;
+				AllBet += LastBet;
+				player[playerNumber].setLastOperation(4);
+				gotoxyGame(x + 38, y + 15); cout << " ";
+				Blind++;
+				return;
+			}
+			else//大　盲　注
+			{
+				gotoxyGame(x + 38, y + 15); cout << ">";
+				player[playerNumber].setLastOperation(5);
+				LastBet *= 2;
+				AllBet += LastBet;
+				gotoxyGame(x + 38, y + 15); cout << " ";
+				Blind++;
+				return;
+			}
+		}
 		if(_getch()== 98)
 		{
 			if (Blind == 1)
@@ -717,6 +805,7 @@ void PlayerBlind(int playerNumber,int Blind)
 //驗證
 void Verification(int playerNumber)
 {
+	if (player[playerNumber].getBot() == true) { return; }
 	if (player[playerNumber].getFold()) { return; }
 	srand(time(0)); //取時間
 	int verificationNumber = (rand()%36)+1;
