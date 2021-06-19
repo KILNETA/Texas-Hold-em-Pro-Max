@@ -27,7 +27,7 @@ Because it contains music files, missing music files may make your experience bo
   
 # Game interface 
   
-![image](https://user-images.githubusercontent.com/47145154/122650635-afb9f080-d166-11eb-8c8c-aa5acc93508c.png)  
+![image](https://user-images.githubusercontent.com/47145154/122651078-16d8a480-d169-11eb-88eb-3560d21ac356.png)  
   
 ![image](https://user-images.githubusercontent.com/47145154/122650615-8c8f4100-d166-11eb-93d7-a6b1c7c4c60a.png)  
   
