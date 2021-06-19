@@ -1,5 +1,5 @@
 # Texas-Hold-em-Pro-Max  
-Texas Holdem Poker.  This is the special subject of our university programming course. Making.  
+<span style="color: green"> Texas Holdem Poker.  This is the special subject of our university programming course. Making.</span>  
   
 ![image](https://user-images.githubusercontent.com/47145154/122650635-afb9f080-d166-11eb-8c8c-aa5acc93508c.png)  
   
@@ -10,7 +10,7 @@ Texas Holdem Poker.  This is the special subject of our university programming c
 Because it contains music files, missing music files may make your experience boring and confusing. Thank you for your cooperation.**  
 
 ## Developer  
-* <font color="#000066">@KILNETA</font><br />   
+* @KILNETA   
   * Producer
   * Planner
   * Developer
