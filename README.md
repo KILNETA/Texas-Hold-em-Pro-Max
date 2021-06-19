@@ -10,7 +10,7 @@ Texas Holdem Poker.  This is the special subject of our university programming c
 Because it contains music files, missing music files may make your experience boring and confusing. Thank you for your cooperation.**  
 
 ## Developer  
-* @KILNETA  
+* <font color="#000066">@KILNETA</font><br />   
   * Producer
   * Planner
   * Developer
