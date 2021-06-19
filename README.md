@@ -4,8 +4,9 @@ Texas Holdem Poker.  This is the special subject of our university programming c
   
 ## Usage notice  
 **If you want to view or play this game, please use this Google Drive to download the application.  
-Because it contains music files, missing music files may make your experience boring and confusing. Thank you for your cooperation.**  
-
+Because it contains music files, missing music files may make your experience boring and confusing. Thank you for your cooperation.  
+Currently only available for multiplayer games**  
+  
 ## Developer  
 * @KILNETA   
   * Producer
