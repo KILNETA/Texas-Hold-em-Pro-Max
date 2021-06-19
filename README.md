@@ -5,7 +5,9 @@ Release demo version v1.0-Bata Currently only available for multiplayer games
 ## Usage notice  
 **If you want to view or play this game, please use this Google Drive to download the application.  
 Because it contains music files, missing music files may make your experience boring and confusing. Thank you for your cooperation.  
-Currently only available for multiplayer games**  
+Currently only available for multiplayer games  
+  
+https://drive.google.com/file/d/1Kb6mv_Hl_CKjGvNxAo-gi2KY6rFRa_wR/view?usp=sharing**  
   
 ## Developer  
 * @KILNETA   
