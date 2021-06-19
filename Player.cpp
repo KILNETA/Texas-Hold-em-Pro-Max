@@ -81,6 +81,10 @@ void Player::setBot()
 {
 	bot = true;
 }
+void Player::setPlayerNumber(int playerNumber)
+{
+	PlayerNumber= playerNumber;
+}
 
 
 int Player::getCardNumber(int num)
@@ -127,4 +131,8 @@ bool Player::getFold()
 bool Player::getBot()
 {
 	return bot;
+}
+int Player::getPlayerNumber()
+{
+	return PlayerNumber;
 }

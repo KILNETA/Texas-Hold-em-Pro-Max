@@ -14,8 +14,30 @@ extern void MultiplayerGame(); //多人遊戲 (MultiplayerGame.cpp)
 
 using namespace std;
 
+#include <stdio.h>
+#include <windows.h>
+
+void Window_Adjustment()
+{
+	SMALL_RECT rect;
+	COORD coord;
+	coord.X = 80; // Defining our X and
+	coord.Y = 25;  // Y size for buffer.
+
+	rect.Top = 0;
+	rect.Left = 0;
+	rect.Bottom = coord.Y - 1; // height for window
+	rect.Right = coord.X - 1;  // width for window
+
+	HANDLE hwnd = GetStdHandle(STD_OUTPUT_HANDLE); // get handle
+	SetConsoleScreenBufferSize(hwnd, coord);       // set buffer size
+	SetConsoleWindowInfo(hwnd, TRUE, &rect);       // set window size
+
+}
+
 int main()
 {
+	Window_Adjustment();
 	Title();
 	while (1)
 	{
