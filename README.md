@@ -15,7 +15,7 @@ Because it contains music files, missing music files may make your experience bo
   * Planner
   * Developer
   * Animation
-  * Soundtrack
+  * Soundtrack (Non-original)
   * Fine art
   * Tester
 * @a9210183  
