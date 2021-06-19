@@ -1,6 +1,6 @@
 # Texas-Hold-em-Pro-Max  
 Texas Holdem Poker.  This is the special subject of our university programming course. Making.  
-發布演示版 v1.0-Bata Currently only available for multiplayer games
+Release demo version v1.0-Bata Currently only available for multiplayer games
   
 ## Usage notice  
 **If you want to view or play this game, please use this Google Drive to download the application.  
