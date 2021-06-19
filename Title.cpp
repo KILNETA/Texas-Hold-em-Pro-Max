@@ -277,7 +277,7 @@ void Title()
 	gotoxy(x - 7, y + 17); cout << "◆◆             ▉";
 	gotoxy(x - 7, y + 18); cout << " ◆             ▉";
 	Sleep(300);
-	gotoxy(x + 3, y + 8); cout << "Ｐｒｏｄｕｃｅｒ＿＿＿";
+	gotoxy(x + 3, y + 8); cout << "Ｐｌａｎｎｅｒ＿＿＿";
 	gotoxy(x - 19, y + 22); cout << "＠KILNETA";
 	Sleep(2200); Title_lost(x, y); }
 	//3次
@@ -321,7 +321,7 @@ void Title()
 	gotoxy(x + 34, y + 20); cout << "◆|";
 	gotoxy(x + 35, y + 21); cout << " |";
 	Sleep(300);
-	gotoxy(x - 23, y + 11); cout << "Ｐｒｏｄｕｃｅｒ＿＿＿";
+	gotoxy(x - 23, y + 11); cout << "＿＿＿Ｄｅｖｅｌｏｐｅｒ";
 	gotoxy(x - 21, y + 15); cout << "＠TREASURE1112";
 	gotoxy(x - 21, y + 17); cout << "＠KILNETA";
 	gotoxy(x - 21, y + 19); cout << "＠a9210183";
@@ -363,7 +363,7 @@ void Title()
 		gotoxy(x - 27, y + 22); cout << "| 20 $ |";
 		gotoxy(x - 27, y + 23); cout << " \\ ▁ /";
 		Sleep(300);
-		gotoxy(x + 7, y + 8); cout << "Ｐｒｏｄｕｃｅｒ＿＿＿";
+		gotoxy(x + 7, y + 8); cout << "Ａｎｉｍａｔｉｏｎ＿＿＿";
 		gotoxy(x + 10, y + 12); cout << "＠KILNETA";
 		Sleep(2200); Title_lost(x, y); }
 	//5次
