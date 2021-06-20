@@ -11,7 +11,7 @@ Most of the operation methods are ↑ ↓ ← →**
 https://drive.google.com/file/d/1Kb6mv_Hl_CKjGvNxAo-gi2KY6rFRa_wR/view?usp=sharing  
   
 ## Developer  
-* @KILNETA   
+* @KILNETA   (A9250941)
   * Producer
   * Planner
   * Developer
@@ -23,7 +23,7 @@ https://drive.google.com/file/d/1Kb6mv_Hl_CKjGvNxAo-gi2KY6rFRa_wR/view?usp=shari
   * Producer
   * Developer
   * Tester
-* @TREASURE1112
+* @TREASURE1112 (A9223188)
   * Producer
   * Developer
   * Director
